@@ -1,0 +1,153 @@
+// <table>
+//   <thead>
+//     <tr>
+//     <td>الاسم</td>
+//     <td colspan="3">لغة عربية</td>
+//     <td colspan="3">لغة انجليزية</td>
+//     <td colspan="3">رياضيات</td>
+//     <td colspan="3">متعدد التخصصات</td>
+//     <td colspan="3">تربية بدنية</td>
+//     <td colspan="3">تربية دينية</td>
+//     <td colspan="3">قيم</td>
+//     <td colspan="3">توكاتسو </td>
+//     <td>النتيجة</td>
+//     </tr>
+//   </thead>
+//   <tbody>
+//     <tr *ngFor="let user of data.slice(1); index as i">
+//       <td>{{user[2]}}</td>
+//       <!-- arabic -->
+//        <td>{{user[3]}}</td>
+//        <td>{{user[4]}}</td>
+//        <td>{{user[5]}}</td>
+//        <!-- E -->
+//         <td>{{user[6]}}</td>
+//        <td>{{user[7]}}</td>
+//        <td>{{user[8]}}</td>
+//        <!-- math -->
+//         <td>{{user[9]}}</td>
+//        <td>{{user[10]}}</td>
+//        <td>{{user[11]}}</td>
+//        <!-- mult -->
+//         <td>{{user[12]}}</td>
+//        <td>{{user[13]}}</td>
+//        <td>{{user[14]}}</td>
+//        <!-- phy -->
+//         <td>{{user[15]}}</td>
+//        <td>{{user[16]}}</td>
+//        <td>{{user[17]}}</td>
+//        <!-- rel -->
+//          <td>{{user[18]}}</td>
+//        <td>{{user[19]}}</td>
+//        <td>{{user[20]}}</td>
+//        <!-- qeam -->
+//          <td>{{user[21]}}</td>
+//        <td>{{user[22]}}</td>
+//        <td>{{user[23]}}</td>
+//        <!-- toka -->
+//         <td>{{user[24]}}</td>
+//        <td>{{user[25]}}</td>
+//        <td>{{user[26]}}</td>
+//        <!-- rel -->
+//         <td>{{user[27]}}</td>
+//     </tr>
+//   </tbody>
+//  </table> 
+:host {
+  display: block;
+  direction: rtl;
+  font-family: 'Cairo', sans-serif;
+  background-color: #f9f9f9;
+  padding: 2rem;
+}
+
+h3 {
+  text-align: center;
+  color: #2d3748;
+  margin-bottom: 1rem;
+}
+
+.select-grade {
+  width: 100%;
+  max-width: 300px;
+  padding: 0.5rem;
+  margin-bottom: 1.5rem;
+  border-radius: 0.375rem;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+input[type="number"] {
+  padding: 0.5rem;
+  width: 200px;
+  max-width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 0.375rem;
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  background-color: #4caf50;
+  border: none;
+  border-radius: 0.375rem;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-right: 1rem;
+
+  &:hover {
+    background-color: #45a049;
+  }
+}
+
+.result-card {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 2rem;
+  overflow-x: auto;
+}
+
+.student-name {
+  color: #333;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 1rem;
+}
+
+td:first-child {
+  font-weight: bold;
+  background-color: #f0f0f0;
+  width: 50%;
+}
+
+@media (max-width: 600px) {
+  .result-card {
+    padding: 1rem;
+  }
+
+  td {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
+
+  .student-name {
+    font-size: 1rem;
+  }
+}

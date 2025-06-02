@@ -1,0 +1,64 @@
+//  <table>
+//   <thead>
+//     <tr>
+//       <td>الاسم</td>
+//       <td colspan="3">لغة عربية</td>
+//       <td colspan="3">لغة انجليزية</td>
+//       <td colspan="3">رياضيات</td>
+//       <td colspan="3">متعدد التخصصات</td>
+//       <td colspan="3">تربية بدنية</td>
+//       <td colspan="3">تربية دينية</td>
+//       <td colspan="3">قيم</td>
+//       <td colspan="3">توكاتسو</td>
+//       <td>النتيجة</td>
+//     </tr>
+//   </thead>
+//   <tbody>
+//     <tr>
+//       <td data-label="الاسم">{{this.user[1]}}</td>
+
+//       <!-- لغة عربية -->
+//       <td data-label="لغة عربية - مستوى">{{this.user[3]}}</td>
+//       <td data-label="لغة عربية - درجة">{{this.user[4]}}</td>
+//       <td data-label="لغة عربية - اللون">{{this.user[5]}}</td>
+
+//       <!-- لغة انجليزية -->
+//       <td data-label="لغة إنجليزية - مستوى">{{this.user[6]}}</td>
+//       <td data-label="لغة إنجليزية - درجة">{{this.user[7]}}</td>
+//       <td data-label="لغة إنجليزية - اللون">{{this.user[8]}}</td>
+
+//       <!-- رياضيات -->
+//       <td data-label="رياضيات - مستوى">{{this.user[9]}}</td>
+//       <td data-label="رياضيات - درجة">{{this.user[10]}}</td>
+//       <td data-label="رياضيات - اللون">{{this.user[11]}}</td>
+
+//       <!-- متعدد التخصصات -->
+//       <td data-label="متعدد التخصصات - مستوى">{{this.user[12]}}</td>
+//       <td data-label="متعدد التخصصات - درجة">{{this.user[13]}}</td>
+//       <td data-label="متعدد التخصصات - اللون">{{this.user[14]}}</td>
+
+//       <!-- تربية بدنية -->
+//       <td data-label="تربية بدنية - مستوى">{{this.user[15]}}</td>
+//       <td data-label="تربية بدنية - درجة">{{this.user[16]}}</td>
+//       <td data-label="تربية بدنية - اللون">{{this.user[17]}}</td>
+
+//       <!-- تربية دينية -->
+//       <td data-label="تربية دينية - مستوى">{{this.user[18]}}</td>
+//       <td data-label="تربية دينية - درجة">{{this.user[19]}}</td>
+//       <td data-label="تربية دينية - اللون">{{this.user[20]}}</td>
+
+//       <!-- القيم -->
+//       <td data-label="القيم - مستوى">{{this.user[21]}}</td>
+//       <td data-label="القيم - درجة">{{this.user[22]}}</td>
+//       <td data-label="القيم - اللون">{{this.user[23]}}</td>
+
+//       <!-- توكاتسو -->
+//       <td data-label="توكاتسو - مستوى">{{this.user[24]}}</td>
+//       <td data-label="توكاتسو - درجة">{{this.user[25]}}</td>
+//       <td data-label="توكاتسو - اللون">{{this.user[26]}}</td>
+
+//       <!-- النتيجة النهائية -->
+//       <td data-label="النتيجة النهائية">{{this.user[27]}}</td>
+//     </tr>
+//   </tbody>
+// </table>
