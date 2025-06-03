@@ -1,108 +1,85 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { FormsModule, NgModel } from '@angular/forms';
 import * as XLSX from 'xlsx';
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-excel-reader',
-  imports: [CommonModule,HttpClientModule,FormsModule],
+  standalone: true,
   templateUrl: './excel-reader.component.html',
-  styleUrl: './excel-reader.component.scss'
+  styleUrls: ['./excel-reader.component.scss'],
+  imports: [FormsModule, CommonModule, HttpClientModule]
 })
 export class ExcelReaderComponent implements OnInit {
-  user:any = false;
-selectedGrade: any = '';
-// find(num: any) {
-//   this.loadExcel()
-//   if(Number(num) +2 > this.data.length){
-//     alert("رقم الجلوس عير موجود")
-//   }
-// this.user= this.data[Number(num)+1];
-
-// }
- data: any[] = [];
+  user: any = null;
+  selectedGrade: string = '';
+  headers: any[] = [];
+  // حذف subHeaders لأن الملف لا يحتوي عليها
+  tableData: any[][] = [];
+  data: any[][] = [];
+  mergedHeaders: { title: string; colspan: number }[] = [];
 
   constructor(private http: HttpClient) {}
 
-  ngOnInit() {
-    // this.loadExcel();
-  }
+  ngOnInit(): void {}
 
-  // loadExcel() {
-  //   this.http.get(this.selectedGrade+ '.xlsx', { responseType: 'arraybuffer' }).subscribe((res: ArrayBuffer) => {
-  //     const data = new Uint8Array(res);
-  //     const workbook = XLSX.read(data, { type: 'array' });
-
-  //     const firstSheet = workbook.SheetNames[0];
-  //     const worksheet = workbook.Sheets[firstSheet];
-
-  //     this.data = XLSX.utils.sheet_to_json(worksheet, { header: 1 }); // header: 1 => array of arrays
-  //     console.log(this.data);
-  //   });
-  // }
- find(num: any) {
-  if (this.selectedGrade === 'null' || this.selectedGrade === '') {
-    alert('رجاء اختر الصف الدراسي');
-    return;
-  }
-
-  this.loadExcel(() => {
-    // ابحث عن الصف الذي يحتوي على الطالب برقم الجلوس المحدد
-    const foundUser = this.data.find(row => row && row[2] == num);
-
-    if (!foundUser) {
-      alert("رقم الجلوس غير موجود");
-      this.user = null;
+  find(num: any): void {
+    if (!this.selectedGrade) {
+      alert('رجاء اختر الصف الدراسي');
       return;
     }
 
-    this.user = foundUser;
-  });
-}
-
-
-loadExcel(callback: Function) {
-  this.http.get(`${this.selectedGrade}.xlsx`, { responseType: 'arraybuffer' }).subscribe((res: ArrayBuffer) => {
-    const data = new Uint8Array(res);
-    const workbook = XLSX.read(data, { type: 'array' });
-
-    const firstSheet = workbook.SheetNames[0];
-    const worksheet = workbook.Sheets[firstSheet];
-
-    this.data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-    callback(); // ✅ شغّل الكود بعد تحميل البيانات
-  });
-}
-
-  getStudentResult(data: any[][], seatNumber: number): string | null {
-  // دور على الصف اللي فيه رؤوس الأعمدة
-  const headerIndex = data.findIndex(row => row.includes("رقم الجلوس") || row.includes("رقم\r\n الجلوس"));
-
-  if (headerIndex === -1) {
-    console.error("لم يتم العثور على رؤوس الأعمدة.");
-    return null;
+    this.loadExcel(() => {
+      const foundUser = this.data.find(row => row && row[2] == num);
+      if (!foundUser) {
+        alert('رقم الجلوس غير موجود');
+        this.user = null;
+        return;
+      }
+      this.user = foundUser;
+    });
   }
 
-  const headers = data[headerIndex];
-  const seatColIndex = headers.findIndex(cell => (cell || "").toString().includes("رقم الجلوس"));
-  const resultColIndex = headers.findIndex(cell => (cell || "").toString().includes("النتيجة"));
-
-  if (seatColIndex === -1 || resultColIndex === -1) {
-    console.error("لم يتم العثور على عمود رقم الجلوس أو النتيجة.");
-    return null;
-  }
-
-  // نبدأ من الصف اللي بعد رؤوس الأعمدة
-  for (let i = headerIndex + 1; i < data.length; i++) {
-    const row = data[i];
-    if (row[seatColIndex] === seatNumber) {
-      return row[resultColIndex] || "لا توجد نتيجة";
+  mergeHeaders(): void {
+    this.mergedHeaders = [];
+    let i = 0;
+    while (i < this.headers.length) {
+      const title = this.headers[i] || this.headers[i - 1] || '';
+      let colspan = 1;
+      while (
+        i + colspan < this.headers.length &&
+        (!this.headers[i + colspan] || this.headers[i + colspan] === title)
+      ) {
+        colspan++;
+      }
+      this.mergedHeaders.push({ title, colspan });
+      i += colspan;
     }
   }
 
-  return "رقم الجلوس غير موجود";
-}
+  loadExcel(callback?: () => void): void {
+    const filePath = `/${this.selectedGrade}.xlsx`;
+    const oReq = new XMLHttpRequest();
+    oReq.open('GET', filePath, true);
+    oReq.responseType = 'arraybuffer';
 
+    oReq.onload = () => {
+      const arraybuffer = oReq.response;
+      const data = new Uint8Array(arraybuffer);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      const sheetJson = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as any[][];
 
+      this.headers = sheetJson[0] ?? [];
+      // حذف التعامل مع subHeaders
+      this.tableData = sheetJson.slice(1);
+      this.data = sheetJson.slice(1);
+      this.mergeHeaders();
+
+      if (callback) callback();
+    };
+
+    oReq.send();
+  }
 }

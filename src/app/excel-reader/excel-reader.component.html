@@ -1,150 +1,33 @@
-<div >
-  <h3> نتيجة مدرسة الشوكا</h3>
-  <!-- <pre>{{ data | json }}</pre>-->
-   <div class="p-4">
-  <label for="grade" class="block mb-2 font-semibold">اختر الصف الدراسي:</label>
-  <select [(ngModel)]="selectedGrade" name="grade" id="grade" class="select-grade">
-    <option value="">-- اختر الصف --</option>
-    <option value="1">الصف الأول الابتدائي</option>
-    <option value="2">الصف الثاني الابتدائي</option>
-    <option value="3">الصف الثالث الابتدائي</option>
-    <option value="4">الصف الرابع الابتدائي</option>
-    <option value="5">الصف الخامس الابتدائي</option>
-    <option value="6">الصف السادس الابتدائي</option>
-  </select>
-</div>
+<div> 
+  <h3>نتيجة مدرسة الشوكا</h3> 
 
+  <div class="p-4"> 
+    <label for="grade" class="block mb-2 font-semibold">اختر الصف الدراسي:</label> 
+    <select [(ngModel)]="selectedGrade" name="grade" id="grade" class="select-grade"> 
+      <option value="">-- اختر الصف --</option> 
+      <option value="1">الصف الأول الابتدائي</option> 
+      <option value="2">الصف الثاني الابتدائي</option> 
+      <option value="3">الصف الثالث الابتدائي</option> 
+      <option value="4">الصف الرابع الابتدائي</option> 
+      <option value="5">الصف الخامس الابتدائي</option> 
+      <option value="6">الصف السادس الابتدائي</option> 
+    </select> 
+  </div> 
 
-<input type="number" value="0" placeholder="رقم الجلوس" #num>
-<button (click)="find(num.value)">عرض النتيجة</button>
- 
+  <input type="number" value="0" placeholder="رقم الجلوس" #num> 
+  <button (click)="find(num.value)">عرض النتيجة</button> 
 
-<div class="result-card" *ngIf="this.user">
-  <h3 class="student-name">الاسم: {{ user[1] }}</h3>
-  <h3 class="student-name">رقم الجلوس: {{ user[2] }}</h3>
-  <table>
-    <tbody>
-      <!-- لغة عربية -->
-      <tr>
-        <td>لغة عربية - المستوى</td>
-        <td>{{ user[3] }}</td>
-      </tr>
-      <tr>
-        <td>لغة عربية - الدرجة</td>
-        <td>{{ user[4] }}</td>
-      </tr>
-      <tr>
-        <td>لغة عربية - اللون</td>
-        <td>{{ user[5] }}</td>
-      </tr>
+  <div class="result-card" *ngIf="user"> 
+    <h3 class="student-name">الاسم: {{ user[1] }}</h3> 
+    <h3 class="student-name">رقم الجلوس: {{ user[2] }}</h3> 
 
-      <!-- لغة إنجليزية -->
-      <tr>
-        <td>لغة إنجليزية - المستوى</td>
-        <td>{{ user[6] }}</td>
-      </tr>
-      <tr>
-        <td>لغة إنجليزية - الدرجة</td>
-        <td>{{ user[7] }}</td>
-      </tr>
-      <tr>
-        <td>لغة إنجليزية - اللون</td>
-        <td>{{ user[8] }}</td>
-      </tr>
-
-      <!-- رياضيات -->
-      <tr>
-        <td>رياضيات - المستوى</td>
-        <td>{{ user[9] }}</td>
-      </tr>
-      <tr>
-        <td>رياضيات - الدرجة</td>
-        <td>{{ user[10] }}</td>
-      </tr>
-      <tr>
-        <td>رياضيات - اللون</td>
-        <td>{{ user[11] }}</td>
-      </tr>
-
-      <!-- متعدد التخصصات -->
-      <tr>
-        <td>متعدد التخصصات - المستوى</td>
-        <td>{{ user[12] }}</td>
-      </tr>
-      <tr>
-        <td>متعدد التخصصات - الدرجة</td>
-        <td>{{ user[13] }}</td>
-      </tr>
-      <tr>
-        <td>متعدد التخصصات - اللون</td>
-        <td>{{ user[14] }}</td>
-      </tr>
-
-      <!-- تربية بدنية -->
-      <tr>
-        <td>تربية بدنية - المستوى</td>
-        <td>{{ user[15] }}</td>
-      </tr>
-      <tr>
-        <td>تربية بدنية - الدرجة</td>
-        <td>{{ user[16] }}</td>
-      </tr>
-      <tr>
-        <td>تربية بدنية - اللون</td>
-        <td>{{ user[17] }}</td>
-      </tr>
-
-      <!-- تربية دينية -->
-      <tr>
-        <td>تربية دينية - المستوى</td>
-        <td>{{ user[18] }}</td>
-      </tr>
-      <tr>
-        <td>تربية دينية - الدرجة</td>
-        <td>{{ user[19] }}</td>
-      </tr>
-      <tr>
-        <td>تربية دينية - اللون</td>
-        <td>{{ user[20] }}</td>
-      </tr>
-
-      <!-- القيم -->
-      <tr>
-        <td>القيم - المستوى</td>
-        <td>{{ user[21] }}</td>
-      </tr>
-      <tr>
-        <td>القيم - الدرجة</td>
-        <td>{{ user[22] }}</td>
-      </tr>
-      <tr>
-        <td>القيم - اللون</td>
-        <td>{{ user[23] }}</td>
-      </tr>
-
-      <!-- توكاتسو -->
-      <tr>
-        <td>توكاتسو - المستوى</td>
-        <td>{{ user[24] }}</td>
-      </tr>
-      <tr>
-        <td>توكاتسو - الدرجة</td>
-        <td>{{ user[25] }}</td>
-      </tr>
-      <tr>
-        <td>توكاتسو - اللون</td>
-        <td>{{ user[26] }}</td>
-      </tr>
-
-      <!-- النتيجة النهائية -->
-      <tr>
-        <td><strong>النتيجة النهائية</strong></td>
-        <td><strong>{{ user[27] }}</strong></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-
-
+    <table class="vertical-table"> 
+      <tbody> 
+        <tr *ngFor="let header of headers; let i = index">
+          <th>{{ header }}</th>
+          <td>{{ user[i] }}</td>
+        </tr>
+      </tbody> 
+    </table> 
+  </div> 
 </div>

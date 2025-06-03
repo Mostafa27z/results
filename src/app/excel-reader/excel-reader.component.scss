@@ -151,3 +151,23 @@ td:first-child {
     font-size: 1rem;
   }
 }
+.vertical-table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 500px;
+}
+
+.vertical-table th, .vertical-table td {
+  border: 1px solid #333;
+  padding: 8px 12px;
+  text-align: right; /* لو عايز النص عربي يكون من اليمين */
+}
+
+.vertical-table th {
+  background-color: #f0f0f0;
+  width: 40%;
+}
+
+.result-card {
+  margin-top: 20px;
+}
