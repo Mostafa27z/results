@@ -31,7 +31,7 @@ export class ExcelReaderComponent implements OnInit {
     }
 
     this.loadExcel(() => {
-      const foundUser = this.data.find(row => row && row[4] == num);
+      const foundUser = this.data.find(row => row && row[5] == num);
       if (!foundUser) {
         alert('رقم الجلوس غير موجود');
         this.user = null;
