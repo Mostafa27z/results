@@ -1,33 +1,95 @@
-<div> 
-  <h3>نتيجة مدرسة الشوكا</h3> 
+<div class="excel-reader-container">
+  <h3>نتيجة مدرسة الشوكا</h3>
 
-  <div class="p-4"> 
-    <label for="grade" class="block mb-2 font-semibold">اختر الصف الدراسي:</label> 
-    <select [(ngModel)]="selectedGrade" name="grade" id="grade" class="select-grade"> 
-      <option value="">-- اختر الصف --</option> 
-      <option value="1">الصف الأول الابتدائي</option> 
-      <option value="2">الصف الثاني الابتدائي</option> 
-      <option value="3">الصف الثالث الابتدائي</option> 
-      <option value="4">الصف الرابع الابتدائي</option> 
-      <option value="5">الصف الخامس الابتدائي</option> 
-      <option value="6">الصف السادس الابتدائي</option> 
-    </select> 
-  </div> 
+  <div class="p-4">
+    <label for="grade" class="block mb-2 font-semibold">اختر الصف الدراسي:</label>
+    <select [(ngModel)]="selectedGrade" name="grade" id="grade" class="select-grade">
+      <option value="">-- اختر الصف --</option>
+      <option value="1">الصف الأول الابتدائي</option>
+      <option value="2">الصف الثاني الابتدائي</option>
+      <option value="3">الصف الثالث الابتدائي</option>
+      <option value="4">الصف الرابع الابتدائي</option>
+      <option value="5">الصف الخامس الابتدائي</option>
+      <option value="6">الصف السادس الابتدائي</option>
+    </select>
+  </div>
 
-  <input type="number" value="0" placeholder="رقم الجلوس" #num> 
-  <button (click)="find(num.value)">عرض النتيجة</button> 
+  <div class="search-section">
+    <input type="number" value="0" [placeholder]="getSearchPlaceholder()" #num>
+    <button (click)="find(num.value)">عرض النتيجة</button>
+  </div>
 
-  <div class="result-card" *ngIf="user"> 
-    <h3 class="student-name">الاسم: {{ user[1] }}</h3> 
-    <h3 class="student-name">رقم الجلوس: {{ user[2] }}</h3> 
+  <div class="result-card" *ngIf="studentResult">
+    <!-- Student Info Header -->
+    <div class="student-header">
+      <h2>{{ studentResult.info.name }}</h2>
+      <div class="student-details">
+        <div class="detail-item">
+          <span class="label">رقم الجلوس:</span>
+          <span class="value">{{ studentResult.info.seatNumber }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">الصف:</span>
+          <span class="value">{{ studentResult.info.grade }}</span>
+        </div>
+        <div class="detail-item" *ngIf="studentResult.info.school">
+          <span class="label">المدرسة:</span>
+          <span class="value">{{ studentResult.info.school }}</span>
+        </div>
+        <div class="detail-item final-result" *ngIf="studentResult.finalResult">
+          <span class="label">النتيجة النهائية:</span>
+          <span class="value result-badge">{{ studentResult.finalResult }}</span>
+        </div>
+      </div>
+    </div>
 
-    <table class="vertical-table"> 
-      <tbody> 
-        <tr *ngFor="let header of headers; let i = index">
-          <th>{{ header }}</th>
-          <td>{{ user[i] }}</td>
-        </tr>
-      </tbody> 
-    </table> 
-  </div> 
+    <!-- Subjects Table -->
+    <div class="subjects-section">
+      <h3>المواد الدراسية</h3>
+      <table class="subjects-table" >
+        <thead>
+          <tr>
+            <th>المادة</th>
+            <th>الدرجة</th>
+            <th>التقدير</th>
+            <th>الوصف</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let subject of studentResult.subjects" [class]="'row-' + getColorClass(subject.color)">
+            <td class="subject-name">{{ subject.name }}</td>
+            <td class="score">{{ subject.score }}</td>
+            <td>
+              <span class="color-badge" [class]="'badge-' + getColorClass(subject.color)">
+                {{ subject.color }}
+              </span>
+            </td>
+            <td class="description">{{ subject.description }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Other Activities -->
+    <div class="activities-section"
+      *ngIf="studentResult.otherActivities && Object.keys(studentResult.otherActivities).length > 0">
+      <h3>الأنشطة والمواد الإضافية</h3>
+      <div class="activities-grid">
+        <div class="activity-item" *ngFor="let activity of Object.keys(studentResult.otherActivities)">
+          <span class="activity-name">{{ activity }}:</span>
+          <span class="activity-status">{{ studentResult.otherActivities[activity] }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Administrators -->
+    <div class="administrators-section" *ngIf="studentResult.administrators && studentResult.administrators.length > 0">
+      <div class="admin-item" *ngFor="let admin of studentResult.administrators; let i = index">
+        <span class="admin-label">
+          {{ i === 0 ? 'المدير' : i === 1 ? 'الوكيل' : 'مسئول الحاسب' }}:
+        </span>
+        <span class="admin-name">{{ admin }}</span>
+      </div>
+    </div>
+  </div>
 </div>
