@@ -7,14 +7,15 @@ import { CommonModule } from '@angular/common';
 interface StudentInfo {
   serialNumber: number;
   name: string;
-  seatNumber: number;
+  seatNumber: string;
+  nationalId?: string;
   grade: string;
   school?: string;
 }
 
 interface Subject {
   name: string;
-  score: number;
+  score: string | number;
   color: string;
   description: string;
 }
@@ -37,22 +38,149 @@ interface StudentResult {
 export class ExcelReaderComponent implements OnInit {
   studentResult: StudentResult | null = null;
   selectedGrade: string = '';
-  headers: any[] = [];
-  data: any[][] = [];
+  allRows: any[][] = [];
 
   // Make Object available in template
   Object = Object;
 
-  // Column mapping for different grades
-  // Grades 1-2: Use National ID (column 2) as search key
-  // Grades 3-6: Use Seat Number (column 2) as search key
+  // Column indices for each grade (0-indexed)
   private columnMapping: { [key: string]: any } = {
-    '1': { searchKeyColumn: 2, searchKeyType: 'nationalId', name: 3, grade: 4, school: 1, subjectsStart: 5, subjectColumnCount: 2 },
-    '2': { searchKeyColumn: 2, searchKeyType: 'nationalId', name: 3, grade: 4, school: 1, subjectsStart: 5, subjectColumnCount: 2 },
-    '3': { searchKeyColumn: 2, searchKeyType: 'seatNumber', name: 4, grade: 3, school: 1, subjectsStart: 5, subjectColumnCount: 3 },
-    '4': { searchKeyColumn: 2, searchKeyType: 'seatNumber', name: 1, grade: 3, school: 4, subjectsStart: 5, subjectColumnCount: 3 },
-    '5': { searchKeyColumn: 2, searchKeyType: 'seatNumber', name: 4, grade: 3, school: 1, subjectsStart: 5, subjectColumnCount: 3 },
-    '6': { searchKeyColumn: 2, searchKeyType: 'seatNumber', name: 4, grade: 3, school: 1, subjectsStart: 5, subjectColumnCount: 3 }
+    '1': {
+      searchKeyColumn: 1, // الرقم القومى
+      searchKeyType: 'nationalId',
+      serialNumber: 0,   // م
+      name: 2,           // اسم الطالب
+      grade: 3,          // الصف
+      school: 4,         // المدرسة
+      subjects: [
+        { name: 'اللغة العربية', scoreCol: 5, colorCol: 6, descCol: -1 },
+        { name: 'اللغة الانجليزية', scoreCol: 7, colorCol: 8, descCol: -1 },
+        { name: 'الرياضيات', scoreCol: 9, colorCol: 10, descCol: -1 },
+        { name: 'التربية الدينية', scoreCol: 11, colorCol: 12, descCol: -1 },
+        { name: 'متعدد التخصصات', scoreCol: 13, colorCol: 14, descCol: -1 },
+        { name: 'التربية البدنية', scoreCol: 15, colorCol: 16, descCol: -1 },
+        { name: 'التوكاتسو', scoreCol: 17, colorCol: 18, descCol: -1 }
+      ],
+      resultCol: 19,     // نتيجة الطالب
+      adminCol: 20       // مدير المدرسة
+    },
+    '2': {
+      searchKeyColumn: 1, // الرقم القومى
+      searchKeyType: 'nationalId',
+      serialNumber: 0,   // م
+      name: 2,           // اسم الطالب
+      grade: 3,          // الصف
+      school: 4,         // المدرسة
+      subjects: [
+        { name: 'اللغة العربية', scoreCol: 5, colorCol: 6, descCol: -1 },
+        { name: 'اللغة الانجليزية', scoreCol: 7, colorCol: 8, descCol: -1 },
+        { name: 'الرياضيات', scoreCol: 9, colorCol: 10, descCol: -1 },
+        { name: 'التربية الدينية', scoreCol: 11, colorCol: 12, descCol: -1 },
+        { name: 'متعدد التخصصات', scoreCol: 13, colorCol: 14, descCol: -1 },
+        { name: 'التربية البدنية', scoreCol: 15, colorCol: 16, descCol: -1 },
+        { name: 'التوكاتسو', scoreCol: 17, colorCol: 18, descCol: -1 }
+      ],
+      resultCol: 19,     // نتيجة الطالب
+      adminCol: 20       // مدير المدرسة
+    },
+    '3': {
+      searchKeyColumn: 1, // رقم الجلوس
+      searchKeyType: 'seatNumber',
+      serialNumber: 0,
+      name: 2,           // اسم الطالب
+      grade: 3,          // الصف
+      school: 4,         // المدرسة
+      subjects: [
+        { name: 'اللغة العربية', scoreCol: 5, colorCol: 6, descCol: 7 },
+        { name: 'الرياضيات', scoreCol: 8, colorCol: 9, descCol: 10 },
+        { name: 'اللغة الانجليزية', scoreCol: 11, colorCol: 12, descCol: 13 },
+        { name: 'المجموع الكلى', scoreCol: 14, colorCol: 15, descCol: 16 },
+        { name: 'التربية الدينية', scoreCol: 17, colorCol: 18, descCol: 19 }
+      ],
+      resultCol: 20,
+      adminCol: 21
+    },
+    '4': {
+      searchKeyColumn: 1, // رقم الجلوس
+      searchKeyType: 'seatNumber',
+      serialNumber: 0,
+      name: 2,           // اسم الطالب
+      grade: 3,          // الصف
+      school: 4,         // المدرسة
+      subjects: [
+        { name: 'اللغة العربية', scoreCol: 5, colorCol: 6, descCol: 7 },
+        { name: 'الرياضيات', scoreCol: 8, colorCol: 9, descCol: 10 },
+        { name: 'الدراسات', scoreCol: 11, colorCol: 12, descCol: 13 },
+        { name: 'العلـوم', scoreCol: 14, colorCol: 15, descCol: 16 },
+        { name: 'اللغة الانجليزية', scoreCol: 17, colorCol: 18, descCol: 19 },
+        { name: 'المجموع الكلي', scoreCol: 20, colorCol: 21, descCol: 22 },
+        { name: 'التربية الدينية', scoreCol: 23, colorCol: 24, descCol: 25 },
+        { name: 'ICT', scoreCol: 26, colorCol: 27, descCol: 28 }
+      ],
+      activities: [
+        { name: 'المهارات المهنية', col: 29 },
+        { name: 'التربية البدنية', col: 30 },
+        { name: 'التربية الفنية', col: 31 },
+        { name: 'التربية الموسيقية', col: 32 },
+        { name: 'التوكاتسو', col: 33 }
+      ],
+      resultCol: 34,
+      adminCol: 35
+    },
+    '5': {
+      searchKeyColumn: 1,
+      searchKeyType: 'seatNumber',
+      serialNumber: 0,
+      name: 2,
+      grade: 3,
+      school: 4,
+      subjects: [
+        { name: 'اللغة العربية', scoreCol: 5, colorCol: 6, descCol: 7 },
+        { name: 'الرياضيات', scoreCol: 8, colorCol: 9, descCol: 10 },
+        { name: 'الدراسات', scoreCol: 11, colorCol: 12, descCol: 13 },
+        { name: 'العلـوم', scoreCol: 14, colorCol: 15, descCol: 16 },
+        { name: 'اللغة الانجليزية', scoreCol: 17, colorCol: 18, descCol: 19 },
+        { name: 'المجموع الكلي', scoreCol: 20, colorCol: 21, descCol: 22 },
+        { name: 'التربية الدينية', scoreCol: 23, colorCol: 24, descCol: 25 },
+        { name: 'ICT', scoreCol: 26, colorCol: 27, descCol: 28 }
+      ],
+      activities: [
+        { name: 'المهارات المهنية', col: 29 },
+        { name: 'التربية البدنية', col: 30 },
+        { name: 'التربية الفنية', col: 31 },
+        { name: 'التربية الموسيقية', col: 32 },
+        { name: 'التوكاتسو', col: 33 }
+      ],
+      resultCol: 34,
+      adminCol: 35
+    },
+    '6': {
+      searchKeyColumn: 1,
+      searchKeyType: 'seatNumber',
+      serialNumber: 0,
+      name: 2,
+      grade: 3,
+      school: 4,
+      subjects: [
+        { name: 'اللغة العربية', scoreCol: 5, colorCol: 6, descCol: 7 },
+        { name: 'الرياضيات', scoreCol: 8, colorCol: 9, descCol: 10 },
+        { name: 'الدراسات', scoreCol: 11, colorCol: 12, descCol: 13 },
+        { name: 'العلـوم', scoreCol: 14, colorCol: 15, descCol: 16 },
+        { name: 'اللغة الانجليزية', scoreCol: 17, colorCol: 18, descCol: 19 },
+        { name: 'المجموع الكلي', scoreCol: 20, colorCol: 21, descCol: 22 },
+        { name: 'التربية الدينية', scoreCol: 23, colorCol: 24, descCol: 25 },
+        { name: 'ICT', scoreCol: 26, colorCol: 27, descCol: 28 }
+      ],
+      activities: [
+        { name: 'المهارات المهنية', col: 29 },
+        { name: 'التربية البدنية', col: 30 },
+        { name: 'التربية الفنية', col: 31 },
+        { name: 'التربية الموسيقية', col: 32 },
+        { name: 'التوكاتسو', col: 33 }
+      ],
+      resultCol: 34,
+      adminCol: 35
+    }
   };
 
   constructor(private http: HttpClient) { }
@@ -67,7 +195,14 @@ export class ExcelReaderComponent implements OnInit {
 
     this.loadExcel(() => {
       const mapping = this.columnMapping[this.selectedGrade];
-      const foundRow = this.data.find(row => row && row[mapping.searchKeyColumn] == num);
+      const searchCol = mapping.searchKeyColumn;
+      
+      // Find the row where the search column matches the input
+      const foundRow = this.allRows.find(row => {
+        if (!row || row.length <= searchCol) return false;
+        const cellValue = String(row[searchCol] || '').trim();
+        return cellValue === String(num).trim();
+      });
 
       if (!foundRow) {
         const searchType = mapping.searchKeyType === 'nationalId' ? 'الرقم القومى' : 'رقم الجلوس';
@@ -85,80 +220,51 @@ export class ExcelReaderComponent implements OnInit {
 
     // Extract student info
     const info: StudentInfo = {
-      serialNumber: row[0],
-      name: row[mapping.name],
-      seatNumber: row[mapping.searchKeyColumn], // This will be National ID for grades 1-2, Seat Number for 3-6
-      grade: row[mapping.grade],
-      school: mapping.school !== null ? row[mapping.school] : undefined
+      serialNumber: row[mapping.serialNumber] || 0,
+      name: row[mapping.name] || '',
+      seatNumber: row[mapping.searchKeyColumn] || '',
+      grade: row[mapping.grade] || '',
+      school: row[mapping.school] || undefined
     };
 
-    // Parse subjects (column count varies by grade)
+    if (mapping.searchKeyType === 'nationalId') {
+      info.nationalId = row[mapping.searchKeyColumn];
+    }
+
+    // Parse subjects based on mapping
     const subjects: Subject[] = [];
-    const subjectNames = this.getSubjectNames();
-    let currentCol = mapping.subjectsStart;
-    const colsPerSubject = mapping.subjectColumnCount;
+    for (const subjectConfig of mapping.subjects) {
+      const score = row[subjectConfig.scoreCol] || '';
+      const color = row[subjectConfig.colorCol] || '';
+      const description = subjectConfig.descCol >= 0 ? row[subjectConfig.descCol] || '' : '';
 
-    for (const subjectName of subjectNames) {
-      if (currentCol < row.length && row[currentCol] !== undefined) {
-        if (colsPerSubject === 2) {
-          // Grades 1-2: score, color only
-          subjects.push({
-            name: subjectName,
-            score: row[currentCol],
-            color: row[currentCol + 1] || '',
-            description: ''
-          });
-          currentCol += 2;
-        } else {
-          // Grades 3-6: score, color, description
-          subjects.push({
-            name: subjectName,
-            score: row[currentCol],
-            color: row[currentCol + 1] || '',
-            description: row[currentCol + 2] || ''
-          });
-          currentCol += 3;
-        }
-      } else {
-        break;
-      }
+      subjects.push({
+        name: subjectConfig.name,
+        score: score,
+        color: color,
+        description: description
+      });
     }
 
-    // Extract other activities (pass/fail subjects)
+    // Extract other activities (for grades 4-6)
     const otherActivities: { [key: string]: string } = {};
-    let activityNames: string[] = [];
-
-    // Grade 3 has different activities than grades 4-6
-    if (this.selectedGrade === '3') {
-      activityNames = ['متعدد التخصصات', 'التربية البدنية', 'التوكاتسو'];
-    } else if (this.selectedGrade === '4' || this.selectedGrade === '5' || this.selectedGrade === '6') {
-      activityNames = ['مهارات', 'تربية بدنية', 'رسم', 'موسيقى', 'توكاتسو'];
-    }
-
-    for (const activity of activityNames) {
-      const headerIndex = this.headers.findIndex(h => h && h.includes(activity));
-      if (headerIndex !== -1 && row[headerIndex]) {
-        otherActivities[activity] = row[headerIndex];
-      }
-    }
-
-    // Extract final result and administrators
-    const resultIndex = this.headers.findIndex(h =>
-      h && (h.includes('نتيجة') || h.includes('النتيجة'))
-    );
-    const finalResult = resultIndex !== -1 ? row[resultIndex] : '';
-
-    const administrators: string[] = [];
-    const adminStartIndex = this.headers.findIndex(h =>
-      h && (h.includes('المدير') || h.includes('مدير'))
-    );
-
-    if (adminStartIndex !== -1) {
-      for (let i = adminStartIndex; i < Math.min(adminStartIndex + 3, row.length); i++) {
-        if (row[i]) {
-          administrators.push(row[i]);
+    if (mapping.activities) {
+      for (const activity of mapping.activities) {
+        const value = row[activity.col] || '';
+        if (value) {
+          otherActivities[activity.name] = value;
         }
       }
+    }
+
+    // Extract final result
+    const finalResult = row[mapping.resultCol] || '';
+
+    // Extract administrators
+    const administrators: string[] = [];
+    const adminIndex = mapping.adminCol;
+    if (row[adminIndex]) {
+      administrators.push(row[adminIndex]);
     }
 
     return {
@@ -168,41 +274,6 @@ export class ExcelReaderComponent implements OnInit {
       administrators,
       finalResult
     };
-  }
-
-  private getSubjectNames(): string[] {
-    // Different subjects for different grades
-    if (this.selectedGrade === '1' || this.selectedGrade === '2') {
-      return [
-        'اللغة العربية',
-        'اللغة الانجليزية',
-        'الرياضيات',
-        'التربية الدينية',
-        'متعدد التخصصات',
-        'التربية البدنية',
-        'التوكاتسو'
-      ];
-    } else if (this.selectedGrade === '3') {
-      return [
-        'اللغة العربية',
-        'الرياضيات',
-        'اللغة الانجليزية',
-        'المجموع الكلى',
-        'التربية الدينية'
-      ];
-    } else {
-      // Grades 4, 5, 6
-      return [
-        'اللغة العربية',
-        'الرياضيات',
-        'الدراسات',
-        'العلـوم',
-        'اللغة الانجليزية',
-        'المجموع الكلي',
-        'التربية الدينية',
-        'ICT'
-      ];
-    }
   }
 
   getColorClass(color: string): string {
@@ -236,8 +307,11 @@ export class ExcelReaderComponent implements OnInit {
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
       const sheetJson = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as any[][];
 
-      this.headers = sheetJson[0] ?? [];
-      this.data = sheetJson.slice(1);
+      // Skip the first 3 rows (header rows) and take only data rows
+      this.allRows = sheetJson.slice(3).filter(row => {
+        // Filter out empty rows
+        return row && row.some(cell => cell !== null && cell !== undefined);
+      });
 
       if (callback) callback();
     };
